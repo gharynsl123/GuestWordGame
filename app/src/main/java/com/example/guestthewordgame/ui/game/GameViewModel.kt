@@ -1,16 +1,26 @@
 package com.example.guestthewordgame.ui.game
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel() {
     // The current word
-    var word = ""
+    //Encapsulation The Word
+    private val _word = MutableLiveData<String>()
+    val word: LiveData<String>
+        get() = _word
 
     // The current score
-    var score = 0
+    //Encapsulation The Score
+    private val _score = MutableLiveData<Int>()
+    val score: LiveData<Int> get() = _score
+
+    // Game finished
+    private val _eventGameFinish = MutableLiveData<Boolean>()
+    val eventGameFinish: LiveData<Boolean>
+        get() = _eventGameFinish
 
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
@@ -47,13 +57,13 @@ class GameViewModel : ViewModel() {
 
     init {
         Log.i(TAG, "GameViewModel created!")
+        _word.value = ""
+        _score.value = 0
+
         resetList()
         nextWord()
     }
 
-    /**
-     * Callback called when the ViewModel is destroyed
-     */
     override fun onCleared() {
         super.onCleared()
         Log.i(TAG, "GameViewModel destroyed!")
@@ -61,24 +71,35 @@ class GameViewModel : ViewModel() {
 
     /** Methods for updating the UI **/
     fun onSkip() {
-        score--
-        nextWord()
-    }
-    fun onCorrect() {
-        if (score != 20){
-            score++
+        if (score.value != 0) {
+            _score.value = (score.value)?.minus(1)
+            resetList()
         }
-        nextWord()
     }
 
-    /**
-     * Moves to the next word in the list.
-     */
+    fun onCorrect() {
+        if (score.value != 20) {
+            _score.value = (score.value)?.plus(1)
+
+            nextWord()
+        }
+    }
+
     private fun nextWord() {
         //Select and remove a word from the list
-        if (!wordList.isEmpty()) {
-            word = wordList.removeAt(0)
+        if (wordList.isNotEmpty()) {
+            _word.value = wordList.removeAt(0)
+        } else {
+            onGameFinish()
         }
+    }
+
+    fun onGameFinish() {
+        _eventGameFinish.value = true
+    }
+
+    fun onGameFinishComplete() {
+        _eventGameFinish.value = false
     }
 
     companion object {

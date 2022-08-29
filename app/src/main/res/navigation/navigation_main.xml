@@ -9,7 +9,7 @@
         android:id="@+id/title_game"
         android:name="com.example.guestthewordgame.ui.title.TitleFragment"
         android:label="fragment_title"
-        tools:layout="@layout/fragment_title" >
+        tools:layout="@layout/fragment_title">
         <action
             android:id="@+id/action_titleFragment_to_gameFragment"
             app:destination="@id/game_game"
@@ -21,7 +21,7 @@
         android:id="@+id/game_game"
         android:name="com.example.guestthewordgame.ui.game.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" >
+        tools:layout="@layout/fragment_game">
         <action
             android:id="@+id/action_game_game_to_score_game"
             app:destination="@id/score_game"
@@ -33,7 +33,7 @@
         android:id="@+id/score_game"
         android:name="com.example.guestthewordgame.ui.score.ScoreFragment"
         android:label="fragment_score"
-        tools:layout="@layout/fragment_score" >
+        tools:layout="@layout/fragment_score">
         <action
             android:id="@+id/action_score_game_to_game_game"
             app:destination="@id/game_game"
@@ -44,7 +44,7 @@
             app:popUpTo="@id/title_game" />
         <argument
             android:name="score"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
 </navigation>

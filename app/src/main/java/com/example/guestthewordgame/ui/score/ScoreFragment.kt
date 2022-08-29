@@ -1,16 +1,17 @@
 package com.example.guestthewordgame.ui.score
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.guestthewordgame.databinding.FragmentScoreBinding
 
 class ScoreFragment : Fragment() {
 
-    private var _binding : FragmentScoreBinding? = null
+    private var _binding: FragmentScoreBinding? = null
     private val binding get() = _binding as FragmentScoreBinding
 
     private lateinit var viewModelFactory: ScoreViewModelFactory
@@ -26,11 +27,24 @@ class ScoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelFactory = ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(requireArguments()).score)
+        viewModelFactory =
+            ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(requireArguments()).score)
         viewModel = ViewModelProvider(this, viewModelFactory)[ScoreViewModel::class.java]
 
-        binding.scoreText.text = viewModel.score.toString()
+        // Add observer for score
+        viewModel.score.observe(viewLifecycleOwner) { newScore ->
+            binding.scoreText.text = newScore.toString()
+        }
 
+        // Navigates back to game when button is pressed
+        viewModel.eventPlayAgain.observe(viewLifecycleOwner) { playAgain ->
+            if (playAgain) {
+                findNavController().navigate(ScoreFragmentDirections.actionScoreGameToGameGame())
+                viewModel.onPlayAgainComplete()
+            }
+        }
+
+        binding.playAgainButton.setOnClickListener { viewModel.onPlayAgain() }
     }
 
 }
